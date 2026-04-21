@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>College Management System · Mini Project</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #1e293b;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .app-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    /* header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .logo h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: #0f3b5e;
+      letter-spacing: -0.5px;
+    }
+    .logo i {
+      color: #2563eb;
+      margin-right: 8px;
+    }
+    .role-switch {
+      display: flex;
+      gap: 8px;
+      background: white;
+      padding: 6px;
+      border-radius: 60px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+    .role-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #475569;
+    }
+    .role-btn i {
+      margin-right: 6px;
+    }
+    .role-btn.active {
+      background: #1e4a7a;
+      color: white;
+      box-shadow: 0 4px 10px rgba(30,74,122,0.2);
+    }
+    .reset-btn {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    /* dashboard grid */
+    .dashboard {
+      background: white;
+      border-radius: 28px;
+      padding: 28px 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+      min-height: 500px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #eef2f6;
+      padding-bottom: 12px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #f9fbfd;
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid #e9edf2;
+    }
+    .badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th {
+      font-weight: 600;
+      color: #475569;
+    }
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+    }
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 0.8rem;
+    }
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    input, select, textarea {
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      font-family: inherit;
+      background: white;
+    }
+    .leave-item, .notes-item {
+      background: #f8fafc;
+      padding: 14px 18px;
+      border-radius: 18px;
+      margin-bottom: 10px;
+    }
+    .status {
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 30px;
+      background: #e2e8f0;
+    }
+    .status.present { background: #dcfce7; color: #166534; }
+    .status.absent { background: #fee2e2; color: #991b1b; }
+    .status.leave { background: #fef9c3; color: #854d0e; }
+    .status.approved { background: #dbeafe; color: #1e40af; }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- header -->
+  <div class="header">
+    <div class="logo">
+      <i class="fas fa-graduation-cap fa-2x"></i>
+      <h1 style="display: inline-block; margin-left: 6px;">CampusFlow</h1>
+      <span style="margin-left: 12px; font-size: 0.9rem; background: #e6edf5; padding: 4px 12px; border-radius: 30px;">Attendance & Management</span>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <div class="role-switch" id="roleSwitchContainer">
+        <button class="role-btn active" data-role="student"><i class="fas fa-user-graduate"></i> Student</button>
+        <button class="role-btn" data-role="teacher"><i class="fas fa-chalkboard-user"></i> Teacher</button>
+        <button class="role-btn" data-role="admin"><i class="fas fa-user-shield"></i> Admin</button>
+      </div>
+      <button class="reset-btn" id="resetDataBtn"><i class="fas fa-rotate-left"></i> Reset demo</button>
+    </div>
+  </div>
+
+  <!-- main dashboard area -->
+  <div class="dashboard" id="dashboardContent">
+    <!-- dynamic content rendered by JS -->
+    <div style="text-align: center; padding: 40px; color: #64748b;">Loading dashboard...</div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- STORAGE & INITIAL DATA ----------
+    const STORAGE_KEY = 'cms_mini_project';
+
+    // Default dataset
+    const defaultData = {
+      students: [
+        { id: 'S001', name: 'Alice Johnson', email: 'alice@college.edu', class: 'CS101', phone: '123456' },
+        { id: 'S002', name: 'Bob Smith', email: 'bob@college.edu', class: 'CS101', phone: '789012' },
+        { id: 'S003', name: 'Clara Davis', email: 'clara@college.edu', class: 'CS202', phone: '345678' }
+      ],
+      teachers: [
+        { id: 'T001', name: 'Dr. Adams', subject: 'Data Structures', assignedClass: 'CS101', email: 'adams@college.edu' },
+        { id: 'T002', name: 'Prof. Lee', subject: 'Algorithms', assignedClass: 'CS202', email: 'lee@college.edu' }
+      ],
+      attendance: [
+        { id: 'att1', studentId: 'S001', date: '2026-04-20', status: 'Present', teacherId: 'T001' },
+        { id: 'att2', studentId: 'S002', date: '2026-04-20', status: 'Absent', teacherId: 'T001' },
+        { id: 'att3', studentId: 'S001', date: '2026-04-19', status: 'Present', teacherId: 'T001' },
+        { id: 'att4', studentId: 'S003', date: '2026-04-20', status: 'Leave', teacherId: 'T002' }
+      ],
+      leaveRequests: [
+        { id: 'L1', studentId: 'S002', reason: 'Medical appointment', fromDate: '2026-04-21', toDate: '2026-04-22', status: 'Pending' },
+        { id: 'L2', studentId: 'S003', reason: 'Family function', fromDate: '2026-04-18', toDate: '2026-04-19', status: 'Approved' }
+      ],
+      notes: [
+        { id: 'N1', title: 'Lecture 5: Trees', fileUrl: '#', uploadedBy: 'T001', subject: 'Data Structures', date: '2026-04-18' },
+        { id: 'N2', title: 'Sorting Algorithms PDF', fileUrl: '#', uploadedBy: 'T002', subject: 'Algorithms', date: '2026-04-19' }
+      ],
+      notifications: [
+        { id: 'not1', message: 'Assignment deadline extended', sender: 'admin', date: '2026-04-20' }
+      ],
+      schedule: [
+        { day: 'Monday', subject: 'Data Structures', time: '10:00 AM', teacher: 'Dr. Adams' },
+        { day: 'Wednesday', subject: 'Algorithms', time: '11:30 AM', teacher: 'Prof. Lee' }
+      ]
+    };
+
+    let appData = JSON.parse(JSON.stringify(defaultData)); // deep copy
+
+    // Current view state
+    let currentRole = 'student';
+    let currentStudentId = 'S001';   // default for student view
+    let currentTeacherId = 'T001';   // default for teacher view
+
+    // ---------- HELPER: load / save / reset ----------
+    function loadData() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try { appData = JSON.parse(stored); } catch(e){ resetToDefault(); }
+      } else {
+        resetToDefault();
+      }
+    }
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+    function resetToDefault() {
+      appData = JSON.parse(JSON.stringify(defaultData));
+      saveData();
+    }
+
+    // ---------- RENDER BASED ON ROLE ----------
+    function renderDashboard() {
+      const container = document.getElementById('dashboardContent');
+      if (currentRole === 'student') renderStudentView(container);
+      else if (currentRole === 'teacher') renderTeacherView(container);
+      else if (currentRole === 'admin') renderAdminView(container);
+    }
+
+    // ---------- STUDENT VIEW ----------
+    function renderStudentView(container) {
+      const student = appData.students.find(s => s.id === currentStudentId) || appData.students[0];
+      if (!student) { container.innerHTML = '<p>No student data.</p>'; return; }
+      currentStudentId = student.id;
+
+      // attendance summary
+      const studentAtt = appData.attendance.filter(a => a.studentId === student.id);
+      const total = studentAtt.length;
+      const present = studentAtt.filter(a => a.status === 'Present').length;
+      const absent = studentAtt.filter(a => a.status === 'Absent').length;
+      const leave = studentAtt.filter(a => a.status === 'Leave').length;
+      const percent = total ? ((present / total)*100).toFixed(1) : '0';
+
+      // leave requests by this student
+      const myLeaves = appData.leaveRequests.filter(l => l.studentId === student.id);
+
+      let html = `
+        <div class="section-title"><i class="fas fa-user-graduate"></i> Student Dashboard · ${student.name} (${student.id}) 
+          <select id="studentSelector" style="margin-left: auto; width: auto; border-radius: 30px;">`;
+      appData.students.forEach(s => { html += `<option value="${s.id}" ${s.id === student.id ? 'selected' : ''}>${s.name} (${s.id})</option>`; });
+      html += `</select></div>
+
+        <div class="card-grid">
+          <div class="stat-card"><i class="fas fa-calendar-check"></i> <strong>Attendance</strong><br>
+            <span style="font-size: 2.3rem; font-weight:700;">${percent}%</span> <span class="badge">present</span>
+            <div style="margin-top:12px;">✅ Present: ${present}  ❌ Absent: ${absent}  📅 Leave: ${leave}</div>
+          </div>
+          <div class="stat-card"><i class="fas fa-clock"></i> <strong>Today's Schedule</strong><br>
+            ${appData.schedule.map(s => `<div>📘 ${s.subject} (${s.time}) · ${s.teacher}</div>`).join('')}
+          </div>
+        </div>
+
+        <!-- Attendance records -->
+        <h4 style="margin:20px 0 10px"><i class="fas fa-list"></i> Recent Attendance</h4>
+        <table>
+          <tr><th>Date</th><th>Status</th><th>Marked by</th></tr>
+          ${studentAtt.slice(-5).reverse().map(att => {
+            const teacher = appData.teachers.find(t=>t.id===att.teacherId)?.name || 'System';
+            return `<tr><td>${att.date}</td><td><span class="status ${att.status.toLowerCase()}">${att.status}</span></td><td>${teacher}</td></tr>`;
+          }).join('')}
+        </table>
+
+        <!-- Notes & Leave -->
+        <div style="display:flex; gap:20px; margin-top:28px; flex-wrap:wrap;">
+          <div style="flex:2; min-width:250px;">
+            <h4><i class="fas fa-book-open"></i> Study Materials</h4>
+            ${appData.notes.map(n => `<div class="notes-item">📄 ${n.title} <span style="float:right;">${n.subject}</span><br><small>Uploaded: ${n.date}</small></div>`).join('')}
+          </div>
+          <div style="flex:1.5;">
+            <h4><i class="fas fa-paper-plane"></i> Submit Leave</h4>
+            <div class="leave-item">
+              <input type="text" id="leaveReason" placeholder="Reason" style="width:100%; margin-bottom:8px;">
+              <div class="flex-row"><input type="date" id="leaveFrom" value="2026-04-21"> to <input type="date" id="leaveTo" value="2026-04-22"></div>
+              <button class="btn btn-sm" id="submitLeaveBtn" style="margin-top:10px;">Apply Leave</button>
+            </div>
+            <h4 style="margin-top:16px;">My Leave Requests</h4>
+            ${myLeaves.map(l => `<div class="leave-item"><b>${l.reason}</b> (${l.fromDate} - ${l.toDate}) <span class="status ${l.status.toLowerCase()}">${l.status}</span></div>`).join('')}
+          </div>
+        </div>
+      `;
+      container.innerHTML = html;
+
+      // event listeners
+      document.getElementById('studentSelector')?.addEventListener('change', (e) => {
+        currentStudentId = e.target.value;
+        renderDashboard();
+      });
+      document.getElementById('submitLeaveBtn')?.addEventListener('click', () => {
+        const reason = document.getElementById('leaveReason').value.trim();
+        const from = document.getElementById('leaveFrom').value;
+        const to = document.getElementById('leaveTo').value;
+        if(!reason) { alert('Enter reason'); return; }
+        const newLeave = {
+          id: 'L' + Date.now(),
+          studentId: currentStudentId,
+          reason, fromDate: from, toDate: to,
+          status: 'Pending'
+        };
+        appData.leaveRequests.push(newLeave);
+        saveData();
+        renderDashboard();
+      });
+    }
+
+    // ---------- TEACHER VIEW ----------
+    function renderTeacherView(container) {
+      const teacher = appData.teachers.find(t => t.id === currentTeacherId) || appData.teachers[0];
+      if (!teacher) { container.innerHTML = '<p>No teacher.</p>'; return; }
+      currentTeacherId = teacher.id;
+
+      const assignedStudents = appData.students.filter(s => s.class === teacher.assignedClass);
+      
+      let html = `
+        <div class="section-title"><i class="fas fa-chalkboard-user"></i> Teacher: ${teacher.name} (${teacher.subject})
+          <select id="teacherSelector" style="margin-left:auto;">`;
+      appData.teachers.forEach(t => { html += `<option value="${t.id}" ${t.id===teacher.id?'selected':''}>${t.name}</option>`; });
+      html += `</select></div>
+
+        <div class="card-grid">
+          <div class="stat-card"><i class="fas fa-users"></i> Class: ${teacher.assignedClass} · ${assignedStudents.length} students</div>
+        </div>
+
+        <!-- Mark Attendance -->
+        <h4>📋 Mark Attendance (${new Date().toISOString().slice(0,10)})</h4>
+        <div style="background:#f1f5f9; border-radius:20px; padding:20px; margin:16px 0;">
+          <table>
+            <tr><th>Student</th><th>Status</th></tr>
+            ${assignedStudents.map(s => {
+              const today = new Date().toISOString().slice(0,10);
+              const existing = appData.attendance.find(a => a.studentId === s.id && a.date === today);
+              return `<tr><td>${s.name} (${s.id})</td>
+                <td><select id="att_${s.id}" data-student="${s.id}" class="att-select">
+                  <option value="Present" ${existing?.status==='Present'?'selected':''}>Present</option>
+                  <option value="Absent" ${existing?.status==='Absent'?'selected':''}>Absent</option>
+                  <option value="Leave" ${existing?.status==='Leave'?'selected':''}>Leave</option>
+                </select></td></tr>`;
+            }).join('')}
+          </table>
+          <button class="btn" id="saveAttendanceBtn" style="margin-top:16px;"><i class="fas fa-save"></i> Save Attendance</button>
+        </div>
+
+        <!-- Upload Notes / Notification -->
+        <div style="display:flex; gap:20px;">
+          <div style="flex:1;">
+            <h4>📤 Upload Study Material</h4>
+            <input type="text" id="noteTitle" placeholder="Title" style="width:100%; margin-bottom:8px;">
+            <input type="text" id="noteSubject" placeholder="Subject" value="${teacher.subject}">
+            <button class="btn btn-sm" id="uploadNoteBtn" style="margin-top:10px;">Upload (mock)</button>
+          </div>
+          <div style="flex:1;">
+            <h4>🔔 Send Notification</h4>
+            <textarea id="notifMsg" placeholder="Message to class..." rows="2" style="width:100%"></textarea>
+            <button class="btn btn-sm" id="sendNotifBtn" style="margin-top:8px;">Send</button>
+          </div>
+        </div>
+        <p style="margin-top:16px; color:#475569;"><i class="fas fa-info-circle"></i> Recent notifications appear in admin/student dash.</p>
+      `;
+      container.innerHTML = html;
+
+      document.getElementById('teacherSelector')?.addEventListener('change', (e) => {
+        currentTeacherId = e.target.value;
+        renderDashboard();
+      });
+      document.getElementById('saveAttendanceBtn')?.addEventListener('click', () => {
+        const today = new Date().toISOString().slice(0,10);
+        const selects = document.querySelectorAll('.att-select');
+        selects.forEach(sel => {
+          const studentId = sel.dataset.student;
+          const status = sel.value;
+          const existingIndex = appData.attendance.findIndex(a => a.studentId === studentId && a.date === today);
+          if (existingIndex !== -1) {
+            appData.attendance[existingIndex].status = status;
+          } else {
+            appData.attendance.push({
+              id: 'att_' + Date.now() + Math.random(),
+              studentId, date: today, status, teacherId: currentTeacherId
+            });
+          }
+        });
+        saveData();
+        renderDashboard();
+        alert('Attendance saved.');
+      });
+      document.getElementById('uploadNoteBtn')?.addEventListener('click', () => {
+        const title = document.getElementById('noteTitle').value;
+        const subject = document.getElementById('noteSubject').value;
+        if(!title) { alert('Enter title'); return; }
+        appData.notes.push({
+          id: 'N'+Date.now(), title, fileUrl: '#', uploadedBy: currentTeacherId,
+          subject: subject || teacher.subject, date: new Date().toISOString().slice(0,10)
+        });
+        saveData();
+        renderDashboard();
+      });
+      document.getElementById('sendNotifBtn')?.addEventListener('click', () => {
+        const msg = document.getElementById('notifMsg').value;
+        if(!msg) return;
+        appData.notifications.push({ id:'not'+Date.now(), message: msg, sender: teacher.name, date: new Date().toISOString().slice(0,10) });
+        saveData();
+        alert('Notification sent!');
+        document.getElementById('notifMsg').value = '';
+      });
+    }
+
+    // ---------- ADMIN VIEW ----------
+    function renderAdminView(container) {
+      const pendingLeaves = appData.leaveRequests.filter(l => l.status === 'Pending');
+      let html = `
+        <div class="section-title"><i class="fas fa-user-shield"></i> Admin Control Panel</div>
+        <div class="card-grid">
+          <div class="stat-card"><i class="fas fa-user-graduate"></i> Total Students: ${appData.students.length}</div>
+          <div class="stat-card"><i class="fas fa-person-chalkboard"></i> Teachers: ${appData.teachers.length}</div>
+        </div>
+
+        <!-- Manage Students -->
+        <h4>👥 Manage Students <button class="btn-outline btn-sm" id="toggleAddStudent" style="margin-left:12px;">+ Add Student</button></h4>
+        <div id="addStudentForm" style="display:none; background:#f8fafc; padding:16px; border-radius:20px; margin:10px 0;">
+          <input type="text" id="newStName" placeholder="Full name"> <input type="text" id="newStClass" placeholder="Class (e.g. CS101)">
+          <button class="btn btn-sm" id="saveNewStudent">Save</button>
+        </div>
+        <table>
+          <tr><th>ID</th><th>Name</th><th>Class</th><th>Email</th></tr>
+          ${appData.students.map(s => `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><td>${s.email}</td></tr>`).join('')}
+        </table>
+
+        <!-- Attendance Reports -->
+        <h4 style="margin-top:30px;">📊 Attendance Report (Select student)</h4>
+        <select id="reportStudentSelect">${appData.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+        <button class="btn-outline btn-sm" id="showReportBtn">Show</button>
+        <div id="reportResult" style="margin-top:12px;"></div>
+
+        <!-- Leave Approvals -->
+        <h4 style="margin-top:28px;">📬 Pending Leave Requests</h4>
+        ${pendingLeaves.length ? pendingLeaves.map(l => {
+          const student = appData.students.find(s=>s.id===l.studentId)?.name || l.studentId;
+          return `<div class="leave-item"><b>${student}</b>: ${l.reason} (${l.fromDate} to ${l.toDate}) 
+            <button class="btn-sm btn" data-leaveid="${l.id}" data-action="approve">✅ Approve</button>
+            <button class="btn-sm btn-outline" data-leaveid="${l.id}" data-action="reject">❌ Reject</button></div>`;
+        }).join('') : '<p>No pending requests.</p>'}
+
+        <h4>📢 Notifications log</h4>
+        ${appData.notifications.slice(-3).reverse().map(n=>`<div class="notes-item">🔔 ${n.message} <small>(${n.date})</small></div>`).join('')}
+      `;
+      container.innerHTML = html;
+
+      // toggle add student
+      document.getElementById('toggleAddStudent')?.addEventListener('click', ()=>{
+        const form = document.getElementById('addStudentForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      });
+      document.getElementById('saveNewStudent')?.addEventListener('click', ()=>{
+        const name = document.getElementById('newStName').value.trim();
+        const cls = document.getElementById('newStClass').value.trim();
+        if(!name || !cls) { alert('Fill fields'); return; }
+        const newId = 'S' + (appData.students.length+1).toString().padStart(3,'0');
+        appData.students.push({ id: newId, name, email: name.toLowerCase().replace(' ','')+'@college.edu', class: cls, phone:'' });
+        saveData();
+        renderDashboard();
+      });
+      // report
+      document.getElementById('showReportBtn')?.addEventListener('click', ()=>{
+        const sid = document.getElementById('reportStudentSelect').value;
+        const student = appData.students.find(s=>s.id===sid);
+        const atts = appData.attendance.filter(a=>a.studentId===sid);
+        const present = atts.filter(a=>a.status==='Present').length;
+        document.getElementById('reportResult').innerHTML = `<strong>${student.name}</strong> · Total records: ${atts.length}, Present: ${present}, Rate: ${atts.length?((present/atts.length)*100).toFixed(1):0}%`;
+      });
+      // leave actions (delegation)
+      container.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const leaveId = btn.dataset.leaveid;
+        const action = btn.dataset.action;
+        if(leaveId && (action==='approve'||action==='reject')) {
+          const leave = appData.leaveRequests.find(l=>l.id===leaveId);
+          if(leave) {
+            leave.status = action==='approve' ? 'Approved' : 'Rejected';
+            saveData();
+            renderDashboard();
+          }
+        }
+      });
+    }
+
+    // ---------- ROLE SWITCH & RESET ----------
+    function setActiveRole(role) {
+      currentRole = role;
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.role === role);
+      });
+      renderDashboard();
+    }
+
+    // ---------- INITIALIZE ----------
+    function init() {
+      loadData();
+      // role buttons
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          setActiveRole(btn.dataset.role);
+        });
+      });
+      document.getElementById('resetDataBtn').addEventListener('click', () => {
+        if(confirm('Reset all data to default?')) {
+          resetToDefault();
+          // reset default selections
+          currentStudentId = 'S001';
+          currentTeacherId = 'T001';
+          renderDashboard();
+        }
+      });
+      // initial render
+      setActiveRole('student');
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
